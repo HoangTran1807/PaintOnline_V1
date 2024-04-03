@@ -5,29 +5,22 @@ module.exports = function (io) {
         console.log('A client connected');
         // Send 'initialData' to the new client
         socket.emit('initialData', arrCell);
-    
-        socket.on('message', (message) => {
-            console.log('Received message:', message);
-            io.emit('message', message); // Send message to all clients
-        });
-    
+
         socket.on('disconnect', () => {
             console.log('A client disconnected');
         });
 
-        socket.on('Client_SendCell', (key, color) => {
-            const cellIndex = arrCell.findIndex(cell => cell.key === key);
-        
-            if (cellIndex !== -1) {
-                // If the cell exists, update its color
-                arrCell[cellIndex].color = color;
+        socket.on('Client_SendCell', (x, y, color) => {
+            let cell = arrCell.find(cell => cell.x === x && cell.y === y);
+
+            if (cell) {
+                // If the cell already exists, update its color
+                cell.color = color;
             } else {
-                // If the cell doesn't exist, add it to arrCell
-                arrCell.push({key, color});
+                // If the cell does not exist, add a new cell to the array
+                arrCell.push({ x, y, color });
             }
-        
-            // Send 'Server_SendCell' to all clients except the sender
-            socket.broadcast.emit('Server_SendCell', key, color);
+            socket.broadcast.emit('Server_SendCell', x, y, color);
         });
     });
 }

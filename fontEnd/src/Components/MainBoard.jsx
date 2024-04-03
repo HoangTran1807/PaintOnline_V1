@@ -77,7 +77,6 @@ const sendCell = (key, color) => {
             ></div>
           ))}
         </div>
-        <button onClick={() => changColorCell()}>Eraser</button>
 
         <div className="slider" style={{ width: "100%" }}>
           <input
