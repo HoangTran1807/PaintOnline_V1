@@ -8,6 +8,16 @@ const CanvasBoard = () => {
     const ColorPicker = ["red", "blue", "green", "yellow", "black", "white"];
     const [currentColor, setCurrentColor] = useState("black");
     const [socket, setSocket] = useState(null);
+    const [currentCell, setCurrentCell] = useState({ x: 0, y: 0 });
+
+    // khi currentCell thay đổi thì thêm màu border cho ô đó
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+        context.fillStyle = 'orange';
+        context.fillRect(currentCell.x * cellSize, currentCell.y * cellSize, cellSize, cellSize);
+    }, [currentCell]);
+
 
     useEffect(() => {
         // Kết nối tới server Socket.IO
@@ -49,6 +59,7 @@ const CanvasBoard = () => {
         const context = canvas.getContext('2d');
         const x = Math.floor(e.nativeEvent.offsetX / cellSize);
         const y = Math.floor(e.nativeEvent.offsetY / cellSize);
+        setCurrentCell({ x, y });
         sendCell(x, y, currentColor);
         context.fillStyle = currentColor;
         context.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
@@ -87,6 +98,7 @@ const CanvasBoard = () => {
             onClick={() => setCurrentColor(color)}
             />
         ))}
+        <button onClick={() => setCurrentColor(currentColor)} style={{width: '10vw', height: '10vw', maxWidth: '260px', maxHeight: '260px', border: `${currentColor === 'white' ? '1px solid black' : 'white'}`}}>Eraser</button>
     </div>
     
       <canvas
