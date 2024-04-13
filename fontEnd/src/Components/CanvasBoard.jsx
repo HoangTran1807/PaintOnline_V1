@@ -15,7 +15,7 @@ const CanvasBoard = () => {
 
     useEffect(() => {
         // Kết nối tới server Socket.IO
-        const newSocket = io('http://localhost:8080');
+        const newSocket = io('https://backendpaint-1.onrender.com');
     
         // Lắng nghe sự kiện 'connect'
         newSocket.on('connect', () => {
