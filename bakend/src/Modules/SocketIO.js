@@ -22,5 +22,11 @@ module.exports = function (io) {
             }
             socket.broadcast.emit('Server_SendCell', x, y, color);
         });
+
+        socket.on('Client_Send_ClearBoard', () => {
+            arrCell = [];
+            io.emit('Server_Send_ClearBoard');
+            console.log('Clear board');
+        });
     });
 }

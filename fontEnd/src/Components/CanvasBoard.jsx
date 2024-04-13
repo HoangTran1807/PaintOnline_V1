@@ -1,22 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import io from "socket.io-client";
+import './childComponent/cvBoard.css';
 
 const CanvasBoard = () => {
     const size = 200;
     const cellSize = 30;
     const canvasRef = useRef(null);
-    const ColorPicker = ["red", "blue", "green", "yellow", "black", "white"];
+    const [ColorPicker, setColorPicker] = useState([]);
     const [currentColor, setCurrentColor] = useState("black");
     const [socket, setSocket] = useState(null);
-    const [currentCell, setCurrentCell] = useState({ x: 0, y: 0 });
+    const [scale, setScale] = useState(1);
 
-    // khi currentCell thay đổi thì thêm màu border cho ô đó
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
-        context.fillStyle = 'orange';
-        context.fillRect(currentCell.x * cellSize, currentCell.y * cellSize, cellSize, cellSize);
-    }, [currentCell]);
 
 
     useEffect(() => {
@@ -48,6 +42,7 @@ const CanvasBoard = () => {
         };
     }, []);
 
+
     const sendCell = (x, y, color) => {
         if (socket) {
             socket.emit('Client_SendCell', x, y, color);
@@ -59,7 +54,6 @@ const CanvasBoard = () => {
         const context = canvas.getContext('2d');
         const x = Math.floor(e.nativeEvent.offsetX / cellSize);
         const y = Math.floor(e.nativeEvent.offsetY / cellSize);
-        setCurrentCell({ x, y });
         sendCell(x, y, currentColor);
         context.fillStyle = currentColor;
         context.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
@@ -78,12 +72,17 @@ const CanvasBoard = () => {
         });
     }
 
+    const handleChangeColor = (e) => {
+        setCurrentColor(e.target.value);
+    }
+
+
 
  
   return (
     <>
     
-    <div className='color-picker' style={{display:'flex', position: 'fixed', top: '0', minWidth:'60vh'}}>
+    {/* <div className='color-picker' style={{display:'flex', position: 'fixed', top: '0', minWidth:'60vh'}}>
         {ColorPicker.map((color) => (
             <div
             key={color}
@@ -98,8 +97,14 @@ const CanvasBoard = () => {
             onClick={() => setCurrentColor(color)}
             />
         ))}
-        <button onClick={() => setCurrentColor(currentColor)} style={{width: '10vw', height: '10vw', maxWidth: '260px', maxHeight: '260px', border: `${currentColor === 'white' ? '1px solid black' : 'white'}`}}>Eraser</button>
-    </div>
+        
+    </div> */}
+
+        <div className='color-picker' style={{display:'flex', position: 'fixed', top: '0', minWidth:'60vh'}}>
+            <input className='resbox' type="color" id="colorPicker" name="colorPicker" onChange={(e) => handleChangeColor(e)}/>
+            <button className='resbox' onClick={() => setScale(2)}>Scale {scale}</button>
+        </div>
+
     
       <canvas
         ref={canvasRef}
